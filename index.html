@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#4338ca">
+<title>O Level AI Test Studio</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#f4f6ff;--card:#fff;--ink:#172033;--muted:#66728a;--line:#e1e6f2;--p:#4f46e5;--green:#147d4e;--red:#b42335}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(125deg,#3730a3,#7c3aed);color:white;padding:22px 16px}header h1{margin:0 0 5px;font-size:25px}header p{margin:0;color:#e7e5ff}.wrap{max-width:960px;margin:auto}
+nav{display:flex;gap:8px;overflow:auto;padding:12px 12px 0;max-width:960px;margin:auto}nav button{white-space:nowrap;border:1px solid var(--line);background:white;border-radius:12px;padding:10px 13px;font-weight:750;color:var(--ink)}nav button.active{background:var(--p);color:white}
+main{max-width:960px;margin:14px auto;padding:0 12px 36px}.tab{display:none}.tab.active{display:block}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:14px;box-shadow:0 8px 25px #1c28510b}
+h2{font-size:20px;margin:0 0 10px}h3{font-size:16px;margin:18px 0 8px}.muted{color:var(--muted);font-size:14px}
+label{display:block;font-size:14px;font-weight:700;margin:11px 0 5px}input,select,textarea{width:100%;border:1px solid #d3daeb;border-radius:11px;padding:11px;font:inherit;background:white;color:var(--ink)}textarea{min-height:80px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+.btn{border:0;border-radius:12px;background:var(--p);color:white;padding:12px 15px;font:inherit;font-weight:750;margin-top:12px;cursor:pointer}.btn.secondary{background:#eef0ff;color:#3932a8}.btn:disabled{opacity:.5}
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-top:8px}.check{display:flex;align-items:flex-start;gap:8px;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:14px}.check input{width:auto;margin-top:4px}
+.notice{white-space:pre-wrap;overflow-wrap:anywhere;border-radius:12px;background:#f0f2ff;color:#35317c;padding:12px;margin-top:12px}.error{background:#fff0f1;color:var(--red)}.success{background:#eaf9f0;color:var(--green)}
+.q{padding:14px 0;border-bottom:1px solid var(--line)}.q:last-child{border:0}.options{display:grid;gap:8px;margin-top:10px}.option{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);padding:10px;border-radius:11px}.option input{width:auto;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:13px;overflow-wrap:anywhere}td,th{text-align:left;padding:8px;border-bottom:1px solid var(--line)}#qr{background:white;padding:10px;display:inline-block;border-radius:8px;margin-top:10px}footer{text-align:center;color:var(--muted);font-size:12px;padding:8px 20px 28px}
+@media(min-width:650px){header{padding:28px 22px}header h1{font-size:30px}.card{padding:22px}}
+</style></head>
+<body>
+<header><div class="wrap"><h1>🎓 O Level AI Test Studio</h1><p>AI Question Paper • MCQ Test • QR Code • Result Analysis</p></div></header>
+<nav>
+<button class="active" data-tab="student">📝 Student Test</button><button data-tab="admin">🔐 Admin: Paper Banao</button><button data-tab="results">📊 Results</button>
+</nav>
+<main>
+<section class="tab active" id="student">
+<div class="card"><h2>QR Code se test join karo</h2><p class="muted">Student ko teacher ka QR scan karna hai. Ya teacher se mila test link yahan paste karein.</p>
+<label for="testLink">Test link / URL</label><input id="testLink" placeholder="https://your-site.com/?test=...">
+<button class="btn" id="openTest">Test kholo</button><div id="studentArea"></div></div>
+</section>
+<section class="tab" id="admin">
+<div class="card"><h2>Admin Login</h2><p class="muted">Paper banane, QR generate karne aur results dekhne ke liye server admin password chahiye.</p>
+<label for="adminPassword">Admin password</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Server par set password">
+<h2 style="margin-top:24px">AI se question paper banao</h2>
+<label for="module">O Level module / subject</label><select id="module"><option value="">Course load ho raha hai...</option></select>
+<label>Chapters select karo (ek ya zyada)</label><div id="chapters" class="checks"></div>
+<div class="row"><div><label for="chapterCount">Kitne chapters se questions?</label><input id="chapterCount" type="number" min="1" value="3"></div><div><label for="questionCount">Total MCQ questions</label><select id="questionCount"><option>5</option><option selected>10</option><option>20</option><option>30</option><option>50</option></select></div></div>
+<div class="row"><div><label for="difficulty">Difficulty (sirf admin ko dikhega)</label><select id="difficulty"><option>Basic</option><option selected>Normal</option><option>Hard</option></select></div><div><label for="duration">Test time (minutes)</label><input id="duration" type="number" min="5" max="180" value="30"></div></div>
+<label for="paperTitle">Paper ka naam (optional)</label><input id="paperTitle" maxlength="100" placeholder="Example: M2 HTML Chapter Test">
+<button class="btn" id="makePaper">✨ AI se paper banao</button><div id="paperMessage"></div>
+<div id="paperShare" hidden class="notice"><h3>Paper ready! QR Code share karo</h3><p class="muted">QR scan karne par students isi test par aayenge. Site ko online deploy karne ke baad hi doosre phones se kaam karega.</p><div id="qr"></div><p id="shareUrl"></p><button class="btn secondary" id="copyLink">Test link copy karo</button></div>
+<h3>Existing papers</h3><button class="btn secondary" id="refreshPapers">Saved papers dikhao</button><div id="papersList"></div>
+</div></section>
+<section class="tab" id="results"><div class="card"><h2>Student Results</h2><p class="muted">Sirf admin password ke saath.</p><button class="btn" id="loadResults">Results load karo</button><div id="resultsList"></div><h3>AI class analysis</h3><button class="btn secondary" id="analyze">AI se analyze karo</button><div id="analysis"></div></div></section>
+</main><footer>O Level course topics are starter topic lists. Teacher should verify syllabus coverage and review AI-generated questions before use.</footer>
+<script>
+const $=id=>document.getElementById(id); let course=[], lastLink="";
+function msg(id,text,type=""){const e=$(id);e.className="notice "+type;e.textContent=text;e.hidden=false;}
+function adminHeaders(){return {"x-admin-password":$("adminPassword").value};}
+async function api(url,opts={}){const r=await fetch(url,{...opts,headers:{"Content-Type":"application/json",...(opts.headers||{})}});const d=await r.json().catch(()=>({error:"Server response invalid."}));if(!r.ok)throw Error(d.error||"Request fail");return d;}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));});
+async function loadCourse(){try{course=(await api("/api/course")).modules; $("module").innerHTML="";course.forEach(m=>{const o=document.createElement("option");o.value=m.code;o.textContent=m.code+" — "+m.name;$("module").append(o)});renderChapters();}catch(e){$("module").innerHTML='<option>Course load nahi hua</option>';msg("paperMessage",e.message,"error");}}
+function renderChapters(){const m=course.find(x=>x.code===$("module").value);$("chapters").innerHTML="";if(!m)return;m.chapters.forEach((c,i)=>{const lab=document.createElement("label");lab.className="check";const cb=document.createElement("input");cb.type="checkbox";cb.value=c;cb.checked=i<Math.min(3,m.chapters.length);const s=document.createElement("span");s.textContent=c;lab.append(cb,s);$("chapters").append(lab)});syncChapterCount();}
+function syncChapterCount(){const n=[...$("chapters").querySelectorAll('input:checked')].length;$("chapterCount").value=n||1;}
+$("module").addEventListener("change",renderChapters);
+$("chapters").addEventListener("change",syncChapterCount);
+$("makePaper").onclick=async()=>{
+ const m=course.find(x=>x.code===$("module").value);
+ const selected=[...$("chapters").querySelectorAll('input:checked')].map(x=>x.value);
+ const wanted=Number($("chapterCount").value)||selected.length;
+ if(!m)return msg("paperMessage","Module select karo.","error");
+ if(!selected.length)return msg("paperMessage","Kam se kam ek chapter select karo.","error");
+ if(wanted!==selected.length)return msg("paperMessage","Chapter count aur selected chapters ki sankhya same rakho. Utne chapters tick karo.","error");
+ $("makePaper").disabled=true;msg("paperMessage","AI question paper bana raha hai. Ismein thoda samay lag sakta hai...");
+ try{
+  const d=await api("/api/admin/generate-paper",{method:"POST",headers:adminHeaders(),body:JSON.stringify({moduleCode:m.code,chapters:selected,count:Number($("questionCount").value),level:$("difficulty").value,durationMinutes:Number($("duration").value),title:$("paperTitle").value})});
+  const url=new URL(location.href);url.search="";url.hash="";url.searchParams.set("test",d.paper.id);lastLink=url.toString();
+  $("paperShare").hidden=false;$("qr").innerHTML="";
+  if(typeof QRCode!=="undefined")new QRCode($("qr"),{text:lastLink,width:210,height:210,correctLevel:QRCode.CorrectLevel.M});
+  else $("qr").textContent="QR library load nahi hui; neeche link copy karein.";
+  $("shareUrl").textContent=lastLink;
+  msg("paperMessage",`Paper save ho gaya: ${d.paper.title}\n${d.paper.total} questions • ${d.paper.durationMinutes} minutes\nDifficulty admin setting hai; student view mein show nahi hoti.`,"success");
+  loadPapers();
+ }catch(e){msg("paperMessage",e.message,"error");}
+ finally{$("makePaper").disabled=false;}
+};
+$("copyLink").onclick=async()=>{try{await navigator.clipboard.writeText(lastLink);alert("Test link copied!");}catch{prompt("Link copy karo:",lastLink)}};
+$("refreshPapers").onclick=loadPapers;
+async function loadPapers(){try{const d=await api("/api/admin/papers",{headers:adminHeaders()});const area=$("papersList");area.innerHTML="";if(!d.papers.length){area.textContent="Abhi papers nahi hain.";return;}const table=document.createElement("table");table.innerHTML="<thead><tr><th>Paper</th><th>Questions</th><th>Time</th><th>Action</th></tr></thead>";const body=document.createElement("tbody");d.papers.forEach(p=>{const tr=document.createElement("tr");[p.title,String(p.total),p.durationMinutes+" min"].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td)});const td=document.createElement("td");const b=document.createElement("button");b.className="btn secondary";b.textContent="QR / Link";b.onclick=()=>{lastLink=new URL(location.href).origin+"/?test="+encodeURIComponent(p.id);$("paperShare").hidden=false;$("qr").innerHTML="";new QRCode($("qr"),{text:lastLink,width:210,height:210});$("shareUrl").textContent=lastLink;};td.append(b);tr.append(td);body.append(tr)});table.append(body);area.append(table);}catch(e){msg("paperMessage",e.message,"error");}}
+$("loadResults").onclick=loadResults;
+async function loadResults(){try{const d=await api("/api/admin/results",{headers:adminHeaders()});const area=$("resultsList");area.innerHTML="";if(!d.results.length){area.textContent="Abhi results nahi hain.";return;}const table=document.createElement("table");table.innerHTML="<thead><tr><th>Student</th><th>Roll</th><th>Paper</th><th>Score</th><th>%</th></tr></thead>";const body=document.createElement("tbody");d.results.forEach(r=>{const tr=document.createElement("tr");[r.name,r.roll,r.paperTitle,`${r.score}/${r.total}`,r.percentage+"%"].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td)});body.append(tr)});table.append(body);area.append(table);}catch(e){msg("resultsList",e.message,"error");}}
+$("analyze").onclick=async()=>{try{msg("analysis","AI class results analyze kar raha hai...");const d=await api("/api/admin/analyze",{method:"POST",headers:adminHeaders(),body:"{}"});msg("analysis",d.analysis,"success");}catch(e){msg("analysis",e.message,"error");}};
+async function openStudentTest(id){
+ const area=$("studentArea");area.innerHTML="";try{
+  const d=await api("/api/test/"+encodeURIComponent(id));const p=d.paper;
+  const head=document.createElement("div");head.className="notice";head.textContent=`${p.title}\n${p.subject}\n${p.total} MCQs • ${p.durationMinutes} minutes`;area.append(head);
+  const form=document.createElement("div");form.innerHTML='<div class="row"><div><label>Student name</label><input id="stName" maxlength="80" placeholder="Naam"></div><div><label>Roll number</label><input id="stRoll" maxlength="40" placeholder="Roll number"></div></div>';
+  const qArea=document.createElement("div");d.questions.forEach((q,i)=>{const block=document.createElement("div");block.className="q";const h=document.createElement("h3");h.textContent=(i+1)+". "+q.question;block.append(h);const opts=document.createElement("div");opts.className="options";q.options.forEach((o,j)=>{const l=document.createElement("label");l.className="option";const inp=document.createElement("input");inp.type="radio";inp.name="sq"+i;inp.value=j;const s=document.createElement("span");s.textContent=o;l.append(inp,s);opts.append(l)});block.append(opts);qArea.append(block)});form.append(qArea);const submit=document.createElement("button");submit.className="btn";submit.textContent="Test submit karo";form.append(submit);const out=document.createElement("div");form.append(out);area.append(form);
+  submit.onclick=async()=>{const name=form.querySelector("#stName").value.trim(),roll=form.querySelector("#stRoll").value.trim();if(!name||!roll)return showInline(out,"Naam aur roll number bharo.","error");const answers=d.questions.map((q,i)=>{const a=form.querySelector('input[name="sq'+i+'"]:checked');return a?Number(a.value):-1});if(answers.includes(-1))return showInline(out,"Har question ka answer select karo.","error");submit.disabled=true;try{const result=(await api("/api/test/"+encodeURIComponent(id)+"/submit",{method:"POST",body:JSON.stringify({name,roll,answers})})).result;showInline(out,`Test submit ho gaya!\nScore: ${result.score}/${result.total}\nPercentage: ${result.percentage}%\n\n`+result.review.map((r,i)=>`${i+1}. ${r.isCorrect?"Sahi":"Galat"} — Correct answer: ${r.correctAnswer+1}. ${d.questions[i].options[r.correctAnswer]}\n${r.explanation||""}`).join("\n\n"),"success");submit.remove();}catch(e){showInline(out,e.message,"error");submit.disabled=false;}};
+ }catch(e){showInline(area,e.message,"error");}
+}
+function showInline(el,text,type=""){el.className="notice "+type;el.textContent=text;}
+$("openTest").onclick=()=>{const val=$("testLink").value.trim();try{const u=new URL(val);const id=u.searchParams.get("test");if(!id)throw Error("URL mein test ID nahi mili.");openStudentTest(id);}catch(e){showInline($("studentArea"),e.message||"Valid test link paste karo.","error");}};
+const params=new URLSearchParams(location.search);if(params.get("test")){document.querySelector('nav button[data-tab="student"]').click();$("testLink").value=location.href;openStudentTest(params.get("test"));}
+loadCourse();
+</script></body></html>
