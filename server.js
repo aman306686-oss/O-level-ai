@@ -17,7 +17,7 @@ for (const f of [PAPERS_FILE, RESULTS_FILE]) {
   if (!fs.existsSync(f)) fs.writeFileSync(f, "[]", "utf8");
 }
 app.use(express.json({ limit: "150kb" }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "Public")));
 
 const COURSE = [
   {
@@ -193,5 +193,5 @@ app.post("/api/admin/analyze", admin, async (req, res) => {
   } catch (e) { res.status(503).json({ error: e.message || "AI analysis available nahi hai." }); }
 });
 
-app.get(/.*/, (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get(/.*/, (req, res) => res.sendFile(path.join(__dirname, "Public", "index.html")));
 app.listen(PORT, "0.0.0.0", () => console.log(`O Level AI QR Test running on port ${PORT}`));
